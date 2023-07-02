@@ -36,7 +36,7 @@ def generate(model, seed = None):
     
   lastWord = '<bos>'
   while lastWord != '<eos':
-    next_bigram = sorted(get_optional_bigrams(lastword, bigram_probabilities))[0][1]
+    next_bigram = sorted(get_optional_bigrams(lastword, model))[0][1]
     generatedText += (' ' + next_bigram)
     lastWord = next_bigram
                           
