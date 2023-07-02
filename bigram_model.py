@@ -18,7 +18,13 @@ def get_bigram_counts(corpus):
 
 def get_bigram_probabilities(corpus):
   bigram_counts = get_bigram_counts(corpus)
-  return bigram_counts =/ (sum(bigram_counts.values()))
+  n = sum(bigram_counts.values())
+  for bigram in bigram_counts:
+    bigram_counts[bigram] /= n
+  return bigram_counts
+
+def make_predictions(seed):
+  pass
 
 def load_corpus(file_path):
   pass
