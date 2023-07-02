@@ -23,8 +23,22 @@ def get_bigram_probabilities(corpus):
     bigram_counts[bigram] /= n
   return bigram_counts
 
-def make_predictions(seed):
-  pass
+def get_optional_bigrams(lastword, bigram_probabilites):
+  return [(bigram, p) for bigram, p in bigram_probabilities.items() if bigram[-1] == lastword]
+
+def generate(model, seed = None):
+  generatedText = '<bos>'
+  
+  if seed:
+    generatedText += (' ' + seed)
+    
+  lastWord = '<bos>'
+  while lastWord != '<eos':
+    next_bigram = sorted(get_optional_bigrams(lastword, bigram_probabilities))[0]
+    generatedText += (' ' + next_bigram)
+    lastWord = next_bigram
+                          
+  return generatedText
 
 def load_corpus(file_path):
   pass
