@@ -7,7 +7,7 @@ def get_stopwords():
 	return(stopwords)
 
 def main():
-	get_stopwords()
+	return get_stopwords()
 
 if __name__ == '__main__':
 	main()
