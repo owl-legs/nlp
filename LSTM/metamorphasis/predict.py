@@ -6,7 +6,6 @@ from tensorflow.keras.models import load_model
 class TestInput():
     def __init__(self):
         self.tokenizer = pickle.load(open(config.TOKEN_DIC_OUTPUT, "rb"))
-        print(self.tokenizer)
         self.tokenKeyMap = {v:k for k,v in self.tokenizer.items()}
         self.model = load_model("metamorphasis.h5")
 
@@ -21,12 +20,8 @@ class TestInput():
             if text.lower() == "quit":
                 break
             else:
-                try:
-                    lastToken = ((text.lower()).split(" "))[-1]
-                    print(lastToken)
-                    self.__predict_next_token__(lastToken)
-                except:
-                    continue
+                lastToken = ((text.lower()).split(" "))[-1]
+                self.__predict_next_token__(lastToken)
     def start(self):
         self.__test__()
 
