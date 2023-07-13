@@ -21,7 +21,8 @@ class TestInput():
                 break
             else:
                 lastToken = ((text.lower()).split(" "))[-1]
-                self.__predict_next_token__(lastToken)
+                nextWord = self.__predict_next_token__(lastToken)
+                print(nextWord)
     def start(self):
         self.__test__()
 
