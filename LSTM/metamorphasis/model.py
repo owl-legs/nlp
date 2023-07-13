@@ -34,7 +34,7 @@ y = to_categorical(y, num_classes=vocab_size)
 print("\n creating model")
 
 model = Sequential()
-model.add(Embedding(vocab_size=vocab_size, embedding_size=10, input_length=1))
+model.add(Embedding(vocab_size, 10, input_length=1))
 model.add(LSTM(1000, return_sequences=True))
 model.add(LSTM(1000))
 model.add(Dense(activation='relu'))
