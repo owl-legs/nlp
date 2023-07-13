@@ -12,7 +12,7 @@ class TestInput():
     def __predict_next_token__(self, lastToken):
         input = np.array([self.tokenizer[lastToken]])
         print(input)
-        index = self.model.predict_class(input)
+        index = self.model.predict_classes(input)
         print(index)
         return self.tokenKeyMap[index]
     def __test__(self):
