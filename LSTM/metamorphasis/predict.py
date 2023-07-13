@@ -10,8 +10,8 @@ class TestInput():
         self.model = load_model("metamorphasis.h5")
 
     def __predict_next_token__(self, lastToken):
-        input = np.array(self.tokenizer[lastToken])
-        preds = self.model.predict_classes(input)
+        input = [self.tokenizer.get(lastToken, 100)]
+        preds = self.model.predict(input)
         index = np.argmax(preds)
         return self.tokenKeyMap[index]
     def __test__(self):
