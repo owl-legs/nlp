@@ -10,7 +10,7 @@ class TestInput():
         self.model = load_model("metamorphasis.h5")
 
     def __predict_next_token__(self, lastToken):
-        input = np.array([self.tokenizer[lastToken]])
+        input = np.array(self.tokenizer[lastToken])
         print(input)
         index = self.model.predict_classes(input)
         print(index)
