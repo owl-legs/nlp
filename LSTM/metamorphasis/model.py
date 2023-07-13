@@ -37,7 +37,7 @@ model = Sequential()
 model.add(Embedding(vocab_size, 10, input_length=1))
 model.add(LSTM(1000, return_sequences=True))
 model.add(LSTM(1000))
-model.add(Dense(activation='relu'))
+model.add(Dense(1000, activation='relu'))
 model.add(Dense(vocab_size, activation="softmax"))
 
 model.summary()
