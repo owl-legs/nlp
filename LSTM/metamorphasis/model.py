@@ -1,19 +1,26 @@
 import pickle
 import config
 import numpy as np
+from functools import reduce
+
+def flatten_reduce_lambda(matrix):
+    return list(reduce(lambda x, y: x + y, matrix, []))
 
 tokens = pickle.load(open(config.TOKEN_DIC_OUTPUT, 'rb'))
-allText = np.array(list(map(lambda x: x[1:-1], pickle.load(open(config.TOKENIZED_SENTENCE_OUTPUT, 'rb'))))).flatten()
+allText = pickle.load(open(config.EMBEDDED_SENTENCES, 'rb'))
+allText = flatten_reduce_lambda([sentence[1:-1] for sentence in allText])
 
 sequences = []
 for i in range(1, len(allText)-1):
-    sequences.append(allText[i-1:i+1])
+    words = allText[i-1:i+1]
+    sequences.append([words])
 
-X = list(map(lambda x: x[0], sequences))
-y = list(map(lambda x: x[1], sequences))
+X = list(map(lambda x: x[0][0], sequences))
+y = list(map(lambda x: x[0][1], sequences))
 
 X = np.array(X)
 y = np.array(y)
+
 
 import tensorflow as tf
 from tensorflow.keras.layers import Embedding, LSTM, Dense
