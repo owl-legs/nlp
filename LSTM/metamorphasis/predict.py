@@ -6,7 +6,7 @@ from tensorflow.keras.models import load_model
 class TestInput():
     def __init__(self):
         self.tokenizer = pickle.load(open(config.TOKEN_DIC_OUTPUT, "rb"))
-        self.tokenKeyMap = {v:k for k,v in self.tokenizer.items()}
+        self.tokenKeyMap = {k:i for i, k in enumerate(self.tokenizer.keys())}
         self.model = load_model("metamorphasis.h5")
 
     def __predict_next_token__(self, lastToken):
