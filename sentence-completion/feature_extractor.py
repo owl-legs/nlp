@@ -13,39 +13,48 @@ class FeatureExtractor:
 
 
         self.stopwords = self.__load_stop_words__()
-        self.wordDic = self.__count_tokens__('model/all_words.txt')
-        self.trainingWordDic = self.__count_tokens__('data/trainingData.txt')
-        self.testWordDic = self.__count_tokens__('data/testData.txt')
+        self.wordDic = self.__count_tokens__(open(config.CORPUS_PATH, 'r').read().split())
+        self.trainingWordDic = self.__count_tokens__(pickle.load(open(config.PROCESSED_TRAIN_DATA_PATH, "rb")))
+        #self.testWordDic = self.__count_tokens__(pickle.load(open(config.PROCESSED_TEST_DATA_PATH, "rb")))
 
     def extract_features(self,
                          embedding_type):
-        pass
+        self.__test_sentence_stats__()
+
+        self.__create_embeddings__(output_path=config.EMBEDDED_TRAIN_PATH, option='word2vec')
+        #self.__create_embeddings__(output_path=config.EMBEDDED_TEST_PATH, option='word2vec', train=False)
     def __load_stop_words__(self):
-        return set(open(config.STOP_WORDS_PATH, "r").split("\n"))
-    def __count_tokens__(file):
-        return collections.Counter(open(file, 'r').read().split())
+        return set(open(config.STOP_WORDS_PATH, "r").read().split(" "))
+    def __count_tokens__(self, sentences):
+        tokenCounts = collections.Counter()
+        for sentence in sentences:
+            for token in sentence:
+                tokenCounts[token] += 1
+        return tokenCounts
     def __filter_words__(self, dic):
         for word in dic.keys():
             if dic[word] < self.min_frequency and word not in self.testWordDic:
                 del dic[word]
         return dic
     def __test_sentence_stats__(self):
-        test_data = pickle.lead(open(config.PROCESSED_TEST_DATA_PATH, 'rb'))
+        test_data = pickle.load(open(config.PROCESSED_TEST_DATA_PATH, 'rb'))
         n = len(test_data)
         textLen = 0
-        minTextLen, maxTestLen = float('inf'), float('-inf')
+        minTextLen, maxTextLen = float('inf'), float('-inf')
         spaceIndex = 0
 
         for testPoint in test_data:
             textLen += len(testPoint['question'])
             minTextLen = min(minTextLen, len(testPoint['question']))
-            maxTextLen = min(maxTextLen, len(testPoint['question']))
+            maxTextLen = max(maxTextLen, len(testPoint['question']))
             spaceIndex += testPoint['question'].index("_____")
 
         self.averageTestSentenceLength = textLen//n
         self.minTestSentenceLength = minTextLen
         self.maxTestSentenceLength = maxTextLen
         self.averageSpaceIndex = spaceIndex//n
+
+        print(self.maxTestSentenceLength)
 
     def __build_word2vec_embeddings__(self):
         corpus = word2vec.Text8Corpus(config.CORPUS_PATH)
@@ -85,7 +94,7 @@ class FeatureExtractor:
                         if word not in embeddingMap:
                             validSentence = False
                 if validSentence:
-                    midIndex = len(sentence) / 2
+                    midIndex = int(len(sentence) // 2)
 
                     preContextVector = np.array([embeddingMap[word] if word not in self.stopwords \
                                                                        and word in embeddingMap \
@@ -110,13 +119,14 @@ class FeatureExtractor:
                     embeddedY.append(postContextVector)
 
                     counter += 1
-                    if counter % self.training_data_size == (self.training_data_size - 1):
+                    if counter == 18269:
                         postfix += 1
                         print("Save file, postfix:", postfix)
-                        pickle.dump((np.array(embeddedX), np.array(embeddedY), len(embeddedX)),
+                        pickle.dump((np.array(embeddedX), np.array(embeddedY), len(embeddedX)), \
                                     open('data/embedded_train_data_%d' % (postfix), 'wb'), True)
                         embeddedX = []
                         embeddedY = []
+                        counter = 0
 
         else:
             sentences = pickle.load(open(config.PROCESSED_TEST_DATA_PATH, "rb"))

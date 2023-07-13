@@ -22,6 +22,7 @@ def load_train_data(directory=config.TRAINING_DATA_PATH):
     with codecs.open('model/all_words.txt', "w", encoding='utf-8', errors='ignore') as out:
         for file in files(directory):
             with open(f'''{directory}/{file}''', 'r') as novel:
+                print(f'''parsing {directory}/{file}''')
                 text = ''
                 parseFlag = False
                 for line in novel.readlines():
@@ -55,6 +56,6 @@ def load_test_data(directory=config.TEST_DATA_PATH):
 
 def load_data():
     load_train_data()
-    load_test_data()
+    #load_test_data()
 
 load_data()

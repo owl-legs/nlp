@@ -1,10 +1,10 @@
 TRAINING_DATA_PATH = "../data/sherlock/sherlock"
 TEST_DATA_PATH = "../data/msftSentenceCompletionTestData.csv"
-STOP_WORDS_PATH = "../utils/stopwords.txt"
+STOP_WORDS_PATH = "utils/stopwords.txt"
 
 CORPUS_PATH = "model/all_words.txt"
-PROCESSED_TRAIN_DATA_PATH = "model/trainingData.txt"
-PROCESSED_TEST_DATA_PATH = "model/testData.txt"
+PROCESSED_TRAIN_DATA_PATH = "data/trainingData.txt"
+PROCESSED_TEST_DATA_PATH = "data/testData.txt"
 
 WORD2VEC_MAP_PATH = "model/word2vec_map.txt"
 WORD2VEC_BIN_PATH = "model/word2vec_map.bin"
