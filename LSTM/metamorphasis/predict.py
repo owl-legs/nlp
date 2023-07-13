@@ -6,15 +6,15 @@ from tensorflow.keras.models import load_model
 class TestInput():
     def __init__(self):
         self.tokenizer = pickle.load(open(config.TOKEN_DIC_OUTPUT, "rb"))
-        self.tokenKeyMap = {k:i for i, k in enumerate(list(self.tokenizer.keys()))}
-        print(self.tokenKeyMap)
+        self.tokens = list(self.tokenizer.keys())
+        self.tokenKeyMap = {k:i for i, k in enumerate(self.tokens)}
         self.model = load_model("metamorphasis.h5")
 
     def __predict_next_token__(self, lastToken):
         input = [self.tokenizer.get(lastToken, 100)]
         preds = self.model.predict(input)
         index = np.argmax(preds)
-        return self.tokenKeyMap[index]
+        return self.tokens[index]
     def __test__(self):
         while True:
             text = input("Enter text: \n")
