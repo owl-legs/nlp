@@ -18,7 +18,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
 
-vocab_size = len(tokens)
+vocab_size = len(tokens) + 1
 y = to_categorical(y, num_classes=vocab_size)
 
 print("\n creating model")
