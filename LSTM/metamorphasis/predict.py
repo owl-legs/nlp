@@ -29,5 +29,4 @@ class TestInput():
 def main():
     TestInput().start()
 
-if __name__ == "main":
-    main()
+main()
