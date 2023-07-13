@@ -13,6 +13,7 @@ class TestInput():
         input = np.array([self.tokenizer[lastToken]])
         print(input)
         index = self.model.predict_class(input)
+        print(index)
         return self.tokenKeyMap[index]
     def __test__(self):
         while True:
