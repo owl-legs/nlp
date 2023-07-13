@@ -1,5 +1,6 @@
 import pickle
 import config
+import numpy as np
 from tensorflow.keras.models import load_model
 
 class TestInput():
@@ -9,8 +10,9 @@ class TestInput():
         self.model = load_model("metamorphasis.h5")
 
     def __predict_next_token__(self, lastToken):
-        self.tokenizer[lastToken]
-        index = self.model.predict_class(lastToken)
+        input = np.array([self.tokenizer[lastToken]])
+        print(input)
+        index = self.model.predict_class(input)
         return self.tokenKeyMap[index]
     def __test__(self):
         while True:
