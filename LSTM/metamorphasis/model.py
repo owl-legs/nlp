@@ -12,6 +12,9 @@ for i in range(1, len(allText)-1):
 X = list(map(lambda x: x[0], sequences))
 y = list(map(lambda x: x[1], sequences))
 
+X = np.array(X)
+y = np.array(y)
+
 import tensorflow as tf
 from tensorflow.keras.layers import Embedding, LSTM, Dense
 from tensorflow.keras.models import Sequential
