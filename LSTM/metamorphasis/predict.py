@@ -23,6 +23,7 @@ class TestInput():
             else:
                 try:
                     lastToken = ((text.lower()).split(" "))[-1]
+                    print(lastToken)
                     self.__predict_next_token__(lastToken)
                 except:
                     continue
