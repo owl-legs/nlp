@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 
 class TestInput():
     def __init__(self):
-        self.tokenizer = pickle.load(open('oneHotEmbeddingMap', "rb"))
+        self.tokenizer = pickle.load(open('embeddings/maps/oneHotEmbeddingMap', "rb"))
         self.tokenKeyMap = {v:k for k,v in self.tokenizer.items()}
         self.model = load_model("metamorphasis.h5")
 
