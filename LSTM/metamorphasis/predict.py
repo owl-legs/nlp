@@ -1,19 +1,16 @@
 import pickle
-import config
 import numpy as np
 from tensorflow.keras.models import load_model
 
 class TestInput():
     def __init__(self):
         self.tokenizer = pickle.load(open('oneHotEmbeddingMap', "rb"))
-        #self.tokens = list(self.tokenizer.keys())
         self.tokenKeyMap = {v:k for k,v in self.tokenizer.items()}
         self.model = load_model("metamorphasis.h5")
 
     def __predict_next_token__(self, lastToken):
         input = [self.tokenizer.get(lastToken, 100)]
-        preds = self.model.predict(input)
-        index = np.argmax(preds)
+        index = np.argmax(self.model.predict(input))
         return self.tokenKeyMap[index]
     def __test__(self):
         while True:
