@@ -18,6 +18,7 @@ class FeatureExtractor:
         #self.testWordDic = self.__count_tokens__(pickle.load(open(config.PROCESSED_TEST_DATA_PATH, "rb")))
 
     def __load_corpus__(self):
+        print("\n loading corpus")
         self.wordDic = open(config.CORPUS_PATH, 'r').read()
         self.wordDic = self.wordDic.replace('--', " ")
         self.wordDic = collections.Counter(self.wordDic.split(" "))
@@ -31,6 +32,7 @@ class FeatureExtractor:
         else:
             self.__create_embeddings__(output_path=config.EMBEDDED_TEST_PATH, option=embedding_type, train=training)
     def __load_stop_words__(self):
+        print("\n loading stop words")
         return set(open(config.STOP_WORDS_PATH, "r").read().split(" "))
 
     def __count_tokens__(self, sentences):
@@ -47,6 +49,8 @@ class FeatureExtractor:
                 self.filteredWords[word] = self.wordDic[word]
 
     def __test_sentence_stats__(self):
+
+        print("\n calculating corpus statistics")
         test_data = pickle.load(open(config.PROCESSED_TEST_DATA_PATH, 'rb'))
         n = len(test_data)
         textLen = 0
@@ -64,8 +68,6 @@ class FeatureExtractor:
         self.maxTestSentenceLength = maxTextLen
         self.averageSpaceIndex = spaceIndex//n
 
-        print(self.maxTestSentenceLength)
-
     def __build_word2vec_embeddings__(self):
         corpus = word2vec.Text8Corpus(config.CORPUS_PATH)
         word_vector = word2vec.Word2Vec(corpus, vector_size=config.EMBEDDING_SIZE)
@@ -77,7 +79,6 @@ class FeatureExtractor:
         for i, word in enumerate(list(self.filteredWords.keys())):
             oneHotMap[word] = i
         oneHotMap['<unk>'] = len(self.filteredWords)
-        print(oneHotMap)
         pickle.dump(oneHotMap, open(one_hot_file_output, 'wb'), True)
 
     def __embed_pre_context__(self, sentence, index, embeddingMap, option):
@@ -100,7 +101,7 @@ class FeatureExtractor:
                                                    and word in embeddingMap \
                                                    and word != "" \
                                  else embeddingMap['<unk>'] \
-                             for word in sentence[:index]])
+                             for word in sentence[index+1:]])
         elif option == 'word2vec':
             return np.array([embeddingMap[word] if word not in self.stopwords \
                                             and word in embeddingMap \
@@ -114,6 +115,8 @@ class FeatureExtractor:
                     'skip-gram':"",
                     'one-hot':config.ONE_HOT_MAP_PATH}
 
+        print("\n creating embedding maps")
+
         if option == 'word2vec':
             embeddingMap = KeyedVectors.load_word2vec_format(config.WORD2VEC_BIN_PATH,
                                                              binary=True)
@@ -126,6 +129,7 @@ class FeatureExtractor:
         postfix = -1
 
         if train:
+            print('\n embedding training data')
             sentences = pickle.load(open(config.PROCESSED_TRAIN_DATA_PATH, "rb"))
             for sentence in sentences:
                 validSentence = False

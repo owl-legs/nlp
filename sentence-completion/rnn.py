@@ -6,9 +6,15 @@ from tensorflow.keras.optimizers import Adam
 
 import pickle
 
+print("\n loading embedded training data")
+
 x, y, datalen = pickle.load(open('data/embedded_train_full', 'rb'))
-print(x, y)
-vocab_size = len(pickle.load(open('model/one_hot_dic.txt', 'rb')))
+
+print(x.shape)
+print(y.shape)
+
+vocab_size = max(y) + 1 #len(pickle.load(open('model/one_hot_dic.txt', 'rb'))) + 1
+y = to_categorical(y, num_classes=vocab_size)
 
 model = Sequential()
 model.add(Embedding(vocab_size, 10, input_length=1))
