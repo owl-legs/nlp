@@ -7,16 +7,20 @@ import numpy as np
 class FeatureExtractor:
     def __init__(self):
 
-        self.min_frequency = 10
+        self.min_frequency = 5
         self.max_frequency = 10000
         self.training_data_size = 100000
 
 
         self.stopwords = self.__load_stop_words__()
-        self.wordDic = self.__count_tokens__(open(config.CORPUS_PATH, 'r').read().split())
+        self.__load_corpus__()
         self.trainingWordDic = self.__count_tokens__(pickle.load(open(config.PROCESSED_TRAIN_DATA_PATH, "rb")))
-        self.testWordDic = self.__count_tokens__(pickle.load(open(config.PROCESSED_TEST_DATA_PATH, "rb")))
+        #self.testWordDic = self.__count_tokens__(pickle.load(open(config.PROCESSED_TEST_DATA_PATH, "rb")))
 
+    def __load_corpus__(self):
+        self.wordDic = open(config.CORPUS_PATH, 'r').read()
+        self.wordDic = self.wordDic.replace('--', " ")
+        self.wordDic = collections.Counter(self.wordDic.split(" "))
     def extract_features(self,
                          embedding_type,
                          training=True):
@@ -28,17 +32,20 @@ class FeatureExtractor:
             self.__create_embeddings__(output_path=config.EMBEDDED_TEST_PATH, option=embedding_type, train=training)
     def __load_stop_words__(self):
         return set(open(config.STOP_WORDS_PATH, "r").read().split(" "))
+
     def __count_tokens__(self, sentences):
         tokenCounts = collections.Counter()
         for sentence in sentences:
             for token in sentence:
                 tokenCounts[token] += 1
         return tokenCounts
-    def __filter_words__(self, dic):
-        for word in dic.keys():
-            if dic[word] < self.min_frequency and word not in self.testWordDic:
-                del dic[word]
-        return dic
+
+    def __filter_words__(self):
+        self.filteredWords = {}
+        for word in self.wordDic.keys():
+            if self.wordDic[word] >= self.min_frequency:  # and word not in self.testWordDic:
+                self.filteredWords[word] = self.wordDic[word]
+
     def __test_sentence_stats__(self):
         test_data = pickle.load(open(config.PROCESSED_TEST_DATA_PATH, 'rb'))
         n = len(test_data)
@@ -66,10 +73,11 @@ class FeatureExtractor:
         word_vector.wv.save_word2vec_format(config.WORD2VEC_BIN_PATH, binary=True)
     def __build_one_hot_mappings__(self, dic, one_hot_file_output=config.ONE_HOT_MAP_PATH):
         oneHotMap = {}
-        wordList = dic.most_common()
-        for i, word in enumerate(wordList):
-            oneHotMap[word[0]] = i
-        oneHotMap['<unk>'] = len(wordList)
+        self.__filter_words__()
+        for i, word in enumerate(list(self.filteredWords.keys())):
+            oneHotMap[word] = i
+        oneHotMap['<unk>'] = len(self.filteredWords)
+        print(oneHotMap)
         pickle.dump(oneHotMap, open(one_hot_file_output, 'wb'), True)
 
     def __embed_pre_context__(self, sentence, index, embeddingMap, option):
@@ -110,11 +118,8 @@ class FeatureExtractor:
             embeddingMap = KeyedVectors.load_word2vec_format(config.WORD2VEC_BIN_PATH,
                                                              binary=True)
         else:
-            try:
-                embeddingMap = pickle.load(open(filePath[option], "rb"))
-            except:
-                self.__build_one_hot_mappings__(dic=self.wordDic)
-                embeddingMap = pickle.load(open(filePath[option], "rb"))
+            self.__build_one_hot_mappings__(dic=self.wordDic)
+            embeddingMap = pickle.load(open(filePath[option], "rb"))
 
         embeddedX, embeddedY = [], []
         counter = 0
@@ -146,8 +151,8 @@ class FeatureExtractor:
                     embeddedX.append([preContextVector, midContextVector])
                     embeddedY.append(postContextVector)
 
-                pickle.dump((np.array(embeddedX), np.array(embeddedY), len(embeddedX)), \
-                             open('data/embedded_train_full', 'wb'), True)
+            pickle.dump((np.array(embeddedX), np.array(embeddedY), len(embeddedX)), \
+                         open('data/embedded_train_full', 'wb'), True)
 
         else:
             sentences = pickle.load(open(config.PROCESSED_TEST_DATA_PATH, "rb"))
