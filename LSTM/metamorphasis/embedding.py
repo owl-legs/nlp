@@ -31,13 +31,13 @@ class Embedding:
         for sentence in self.sentences:
             embedding = list(map(lambda x: embeddingMap.get(x, '<unk>'), sentence))
             embeddedSentences += [embedding]
-        pickle.dump(embeddingMap, open('oneHotEmbeddingMap', 'wb'), True)
-        pickle.dump(embeddedSentences, open('embeddedSentences', 'wb'), True)
+        pickle.dump(embeddingMap, open('embeddings/maps/oneHotEmbeddingMap', 'wb'), True)
+        pickle.dump(embeddedSentences, open('embeddings/embeddedSentences', 'wb'), True)
     def __create_word2vec_embeddings__(self):
         print('\n creating word2vec embedding map')
         word_vector = word2vec.Word2Vec(sentences=self.sentences, vector_size=self.embedding_size)
-        word_vector.wv.save_word2vec_format('word2vecEmbeddingMap.txt', binary=False)
-        word_vector.wv.save_word2vec_format('word2vecEmbeddingMap.bin', binary=True)
+        word_vector.wv.save_word2vec_format('embeddings/maps/word2vecEmbeddingMap.txt', binary=False)
+        word_vector.wv.save_word2vec_format('embeddings/maps/word2vecEmbeddingMap.bin', binary=True)
         self.wv = word_vector.wv
 
 embedding = Embedding()
