@@ -40,10 +40,12 @@ class FeatureExtractor:
 
     def __filter_words__(self):
         self.filteredWords = {}
+        i = 0
         for word in self.wordDic.keys():
             if self.wordDic[word] >= self.min_frequency:
-                self.filteredWords[word] = self.wordDic[word]
-
+                self.filteredWords[word] = i
+                i += 1
+        self.filteredWords['<unk>'] = len(self.filteredWords)
     def __test_sentence_stats__(self):
 
         print("\n calculating corpus statistics")
@@ -114,10 +116,6 @@ class FeatureExtractor:
 
     def __create_embeddings__(self, output_path, option='one-hot', train=True):
 
-        filePath = {'word2vec':config.WORD2VEC_MAP_PATH,
-                    'skip-gram':"",
-                    'one-hot':config.ONE_HOT_MAP_PATH}
-
         print("\n creating embedding maps")
 
         if option == 'word2vec':
@@ -125,7 +123,7 @@ class FeatureExtractor:
                                                              binary=True)
         else:
             self.__build_one_hot_mappings__()
-            embeddingMap = pickle.load(open(filePath[option], "rb"))
+            embeddingMap = self.filteredWords #pickle.load(open(config.ONE_HOT_MAP_PATH, "rb"))
 
         embeddedX, embeddedY = [], []
         batchX, batchY = [], []
@@ -142,10 +140,10 @@ class FeatureExtractor:
                 midIndex = int(len(sentence) // 2)
 
                 preContextVector = self.__embed_pre_context__(sentence, midIndex, embeddingMap, option)
-                preContextVector = np.sum(preContextVector, axis=0)
+                #preContextVector = np.sum(preContextVector, axis=0)
 
                 postContextVector = self.__embed_post_context__(sentence, midIndex, embeddingMap, option)
-                postContextVector = np.sum(postContextVector, axis=0)
+                #postContextVector = np.sum(postContextVector, axis=0)
 
                 midContextVector = self.__embed_mid_context__(sentence, midIndex, embeddingMap, option)
 

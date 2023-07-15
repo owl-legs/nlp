@@ -1,4 +1,5 @@
 import config
+import pickle
 import data_reader
 import tensorflow as tf
 from tensorflow.keras.layers import Embedding, LSTM, Dense
@@ -10,7 +11,7 @@ from tensorflow.keras.optimizers import Adam
 
 class Model:
     def __init__(self):
-        self.vocab_size = 101485
+        self.vocab_size = max(pickle.load(open(config.ONE_HOT_MAP_PATH, "rb")).values())
         self.model = self.__build_model__()
         self.optimzer = self.__build_optimizer__()
     def __build_model__(self):
