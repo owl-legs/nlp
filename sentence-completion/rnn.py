@@ -16,9 +16,11 @@ class Model:
         self.optimzer = self.__build_optimizer__()
         self.dr = data_reader.DataReader()
 
+        self.n_inputs = config.EMBEDDING_SIZE
+
     def __build_model__(self):
         model = Sequential()
-        model.add(Embedding(self.vocab_size, 10, input_length=1))
+        #model.add(Embedding(self.vocab_size, 10, input_length=1))
         model.add(LSTM(1000, return_sequences=True))
         model.add(LSTM(1000))
         model.add(Dense(1000, activation='relu'))
@@ -33,12 +35,15 @@ class Model:
 
         with tf.GradientTape() as tape:
             pred = self.model(X)
-            loss = categorical_crossentropy(pred, y)
+            loss = tf.compat.v1.losses.cosine_distance(y, pred, axis=1)
 
         grads = tape.gradient(loss, self.model.trainable_variables)
         self.optimzer.apply_gradients(zip(grads, self.model.trainable_variables))
 
         print(grads)
+
+    def save(self):
+        self.model.save('sherlock.h5')
 
     def train(self):
 
@@ -49,10 +54,17 @@ class Model:
             for batch in range(config.MAX_POSTFIX):
 
                 batchX, batchY = self.dr.get_next_batch()
-                batchY = to_categorical(batchY, num_classes=self.vocab_size)
+
+                #shape needs to be (n_samples, timestamps, input_size)
+
+                batchX = batchX.reshape((batchX.shape[0], batchX.shape[1], self.n_inputs))
+                batchY = batchY.reshape((batchY.shape[0], self.n_inputs))
 
                 self.__step__(batchX, batchY)
 
 
+
+
 mod = Model()
 mod.train()
+mod.save()

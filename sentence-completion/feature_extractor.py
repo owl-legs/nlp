@@ -133,6 +133,7 @@ class FeatureExtractor:
         counter = 0
         postfix = -1
 
+
         if train:
             print('\n embedding training data')
             sentences = pickle.load(open(config.PROCESSED_TRAIN_DATA_PATH, "rb"))
@@ -140,11 +141,30 @@ class FeatureExtractor:
             print(f'''\n training data size: {self.training_data_size}''')
             for sentence in sentences:
 
-                midIndex = int(len(sentence) // 2)
+                midIndex = int(len(sentence) / 2)
 
                 preContextVector = self.__embed_pre_context__(sentence, midIndex, embeddingMap, option)
                 postContextVector = self.__embed_post_context__(sentence, midIndex, embeddingMap, option)
                 midContextVector = self.__embed_mid_context__(sentence, midIndex, embeddingMap, option)
+
+                try:
+                    if len(preContextVector) != config.EMBEDDING_SIZE:
+                        preContextVector = np.zeros(config.EMBEDDING_SIZE)
+                except:
+                    preContextVector = np.zeros(config.EMBEDDING_SIZE)
+
+                if len(midContextVector) != config.EMBEDDING_SIZE:
+                    midContextVector = np.zeros(config.EMBEDDING_SIZE)
+
+                try:
+                    if len(postContextVector) != config.EMBEDDING_SIZE:
+                        postContextVector = np.zeros(config.EMBEDDING_SIZE)
+                except:
+                    postContextVector = np.zeros(config.EMBEDDING_SIZE)
+
+                print(preContextVector.shape)
+                print(midContextVector.shape)
+                print(postContextVector.shape)
 
                 batchX.append([preContextVector, midContextVector])
                 batchY.append(postContextVector)
@@ -166,6 +186,12 @@ class FeatureExtractor:
 
             pickle.dump((np.array(embeddedX), np.array(embeddedY), len(embeddedX)), \
                          open('data/embedded_train_full', 'wb'), True)
+
+            pickle.dump({'max_postfix': postfix,
+                         'vocab_size': len(self.wordDic.keys()),
+                         'word2vec_vector_size': config.EMBEDDING_SIZE,
+                         'one_hot_vec_size': len(self.wordDic.keys())},
+                        open('corpus_config', 'wb'), True)
 
         else:
             sentences = pickle.load(open(config.PROCESSED_TEST_DATA_PATH, "rb"))
