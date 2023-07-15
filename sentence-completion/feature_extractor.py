@@ -86,10 +86,11 @@ class FeatureExtractor:
                                  else embeddingMap['<unk>'] \
                              for word in sentence[:index]])
         elif option == 'word2vec':
-            return np.array([embeddingMap[word] if word in embeddingMap \
+            vector = np.array([embeddingMap[word] if word in embeddingMap \
                                             and word != "" \
                           else np.zeros(config.EMBEDDING_SIZE) \
                       for word in sentence[:index]])
+            return np.sum(vector, axis=0)
     def __embed_mid_context__(self, sentence, midIndex, embeddingMap, option):
         if option == 'one-hot':
             if sentence[midIndex] in embeddingMap:
@@ -109,16 +110,18 @@ class FeatureExtractor:
                                  else embeddingMap['<unk>'] \
                              for word in sentence[index+1:]])
         elif option == 'word2vec':
-            return np.array([embeddingMap[word] if word in embeddingMap \
+            vector = np.array([embeddingMap[word] if word in embeddingMap \
                                             and word != "" \
                           else np.zeros(config.EMBEDDING_SIZE) \
                       for word in sentence[index+1:]])
+            return np.sum(vector, axis=0)
 
     def __create_embeddings__(self, output_path, option='one-hot', train=True):
 
         print("\n creating embedding maps")
 
         if option == 'word2vec':
+            self.__build_word2vec_embeddings__()
             embeddingMap = KeyedVectors.load_word2vec_format(config.WORD2VEC_BIN_PATH,
                                                              binary=True)
         else:
@@ -140,11 +143,7 @@ class FeatureExtractor:
                 midIndex = int(len(sentence) // 2)
 
                 preContextVector = self.__embed_pre_context__(sentence, midIndex, embeddingMap, option)
-                #preContextVector = np.sum(preContextVector, axis=0)
-
                 postContextVector = self.__embed_post_context__(sentence, midIndex, embeddingMap, option)
-                #postContextVector = np.sum(postContextVector, axis=0)
-
                 midContextVector = self.__embed_mid_context__(sentence, midIndex, embeddingMap, option)
 
                 batchX.append([preContextVector, midContextVector])
@@ -174,10 +173,7 @@ class FeatureExtractor:
                 question = testCase['question']
                 index = question.index("_____")
                 preContextVector = self.__embed_pre_context__(question, index, embeddingMap, option)
-                preContextVector = np.sum(preContextVector, axis=0)
-
                 postContextVector = self.__embed_post_context__(question, index, embeddingMap, option)
-                postContextVector = np.sum(postContextVector, axis=0)
 
                 for option in {'a', 'b', 'c', 'd', 'e'}:
 
@@ -194,4 +190,4 @@ class FeatureExtractor:
 
 
 featureExtractor = FeatureExtractor()
-featureExtractor.extract_features(embedding_type='one-hot')
+featureExtractor.extract_features(embedding_type='word2vec')
