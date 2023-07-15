@@ -154,7 +154,7 @@ class FeatureExtractor:
 
                 counter += 1
 
-                if counter == (self.training_data_size // 8) - 1:
+                if counter == (self.training_data_size // config.MAX_POSTFIX) - 1:
                     postfix += 1
 
                     print(f'''\n\nwriting train data, postfix is {postfix}''')

@@ -14,4 +14,5 @@ EMBEDDED_TRAIN_PATH = "model/embedded_train_vectors.txt"
 EMBEDDED_TEST_PATH = "model/embedded_test_vectors.txt"
 
 EMBEDDING_SIZE = 300
+MAX_POSTFIX = 72
 
