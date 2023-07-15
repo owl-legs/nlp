@@ -21,12 +21,9 @@ class FeatureExtractor:
     def extract_features(self,
                          embedding_type,
                          training=True):
-        self.__test_sentence_stats__()
-
-        if training:
-            self.__create_embeddings__(output_path=config.EMBEDDED_TRAIN_PATH, option=embedding_type, train=training)
-        else:
-            self.__create_embeddings__(output_path=config.EMBEDDED_TEST_PATH, option=embedding_type, train=training)
+        if not training:
+            self.__test_sentence_stats__()
+        self.__create_embeddings__(output_path=config.EMBEDDED_TEST_PATH, option=embedding_type, train=training)
     def __load_stop_words__(self):
         print("\n loading stop words")
         return set(open(config.STOP_WORDS_PATH, "r").read().split(" "))
@@ -121,12 +118,14 @@ class FeatureExtractor:
         print("\n creating embedding maps")
 
         if option == 'word2vec':
-            self.__build_word2vec_embeddings__()
+            if train:
+                self.__build_word2vec_embeddings__()
             embeddingMap = KeyedVectors.load_word2vec_format(config.WORD2VEC_BIN_PATH,
                                                              binary=True)
         else:
-            self.__build_one_hot_mappings__()
-            embeddingMap = self.filteredWords #pickle.load(open(config.ONE_HOT_MAP_PATH, "rb"))
+            if train:
+                self.__build_one_hot_mappings__()
+            embeddingMap = pickle.load(open(config.ONE_HOT_MAP_PATH, "rb"))
 
         embeddedX, embeddedY = [], []
         batchX, batchY = [], []
@@ -161,10 +160,6 @@ class FeatureExtractor:
                         postContextVector = np.zeros(config.EMBEDDING_SIZE)
                 except:
                     postContextVector = np.zeros(config.EMBEDDING_SIZE)
-
-                print(preContextVector.shape)
-                print(midContextVector.shape)
-                print(postContextVector.shape)
 
                 batchX.append([preContextVector, midContextVector])
                 batchY.append(postContextVector)
@@ -201,6 +196,17 @@ class FeatureExtractor:
                 preContextVector = self.__embed_pre_context__(question, index, embeddingMap, option)
                 postContextVector = self.__embed_post_context__(question, index, embeddingMap, option)
 
+                try:
+                    if len(preContextVector) != config.EMBEDDING_SIZE:
+                        preContextVector = np.zeros(config.EMBEDDING_SIZE)
+                except:
+                    preContextVector = np.zeros(config.EMBEDDING_SIZE)
+                try:
+                    if len(postContextVector) != config.EMBEDDING_SIZE:
+                        postContextVector = np.zeros(config.EMBEDDING_SIZE)
+                except:
+                    postContextVector = np.zeros(config.EMBEDDING_SIZE)
+
                 for option in {'a', 'b', 'c', 'd', 'e'}:
 
                     if testCase[option] in embeddingMap:
@@ -213,7 +219,6 @@ class FeatureExtractor:
 
             pickle.dump((np.array(embeddedX), np.array(embeddedY), len(embeddedX)), open(config.EMBEDDED_TEST_PATH, 'wb'), True)
 
-
-
 featureExtractor = FeatureExtractor()
-featureExtractor.extract_features(embedding_type='word2vec')
+#featureExtractor.extract_features(embedding_type='word2vec')
+featureExtractor.extract_features(embedding_type='word2vec', training=False)
