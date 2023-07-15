@@ -15,3 +15,7 @@ EMBEDDED_TEST_PATH = "model/embedded_test_vectors.txt"
 
 EMBEDDING_SIZE = 300
 
+EPOCHS = 10
+MAX_POSTFIX = 72
+BATCH_SIZE = 216
+
