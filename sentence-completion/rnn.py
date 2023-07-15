@@ -4,8 +4,8 @@ import data_reader
 import tensorflow as tf
 from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.losses import categorical_crossentropy
-from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.losses import categorical_crossentropy, cosine_similarity
+#from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
 
 
@@ -13,7 +13,7 @@ class Model:
     def __init__(self, embeddingType='word2vec'):
         self.vocab_size = max(pickle.load(open(config.ONE_HOT_MAP_PATH, "rb")).values())
         self.model = self.__build_model__()
-        self.optimzer = self.__build_optimizer__()
+        self.optimizer = self.__build_optimizer__()
         self.dr = data_reader.DataReader()
 
         self.n_inputs = config.EMBEDDING_SIZE
@@ -35,10 +35,10 @@ class Model:
 
         with tf.GradientTape() as tape:
             pred = self.model(X)
-            loss = tf.compat.v1.losses.cosine_distance(y, pred, axis=1)
+            loss = cosine_similarity(y.astype('float32'), pred, axis=1)
 
         grads = tape.gradient(loss, self.model.trainable_variables)
-        self.optimzer.apply_gradients(zip(grads, self.model.trainable_variables))
+        self.optimizer.apply_gradients(zip(grads, self.model.trainable_variables))
 
         print(grads)
 
@@ -62,7 +62,7 @@ class Model:
 
                 self.__step__(batchX, batchY)
 
-
+        self.model.compile(optimizer=self.optimizer, loss=cosine_similarity, metrics=['accuracy'])
 
 
 mod = Model()
