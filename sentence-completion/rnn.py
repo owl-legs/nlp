@@ -13,6 +13,11 @@ x, y, datalen = pickle.load(open('data/embedded_train_full', 'rb'))
 print(x.shape)
 print(y.shape)
 
+x, y = x[:1000], y[:1000]
+
+print(x.shape)
+print(y.shape)
+
 vocab_size = max(y) + 1 #len(pickle.load(open('model/one_hot_dic.txt', 'rb'))) + 1
 y = to_categorical(y, num_classes=vocab_size)
 
@@ -39,8 +44,8 @@ tensorboard_Visualization = TensorBoard(log_dir=logdir)
 
 print("\n compiling model")
 
-model.compile(loss="categorical_crossentropy", optimizer=Adam(lr=0.001))
+model.compile(loss="categorical_crossentropy", optimizer=Adam(learning_rate=0.001))
 
 print("\n training model")
 
-model.fit(x, y, epochs=150, batch_size=64, callbacks=[checkpoint, reduce, tensorboard_Visualization])
+model.fit(x, y, epochs=150, batch_size=10, callbacks=[checkpoint, reduce, tensorboard_Visualization])
