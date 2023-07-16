@@ -1,0 +1,1 @@
+inspired by [this user's contribution](https://github.com/pochih/Sentence-Completion)
