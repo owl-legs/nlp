@@ -2,6 +2,7 @@ import pickle
 import numpy as np
 import n_gram_config
 import config
+from embedding import Embedding
 
 class FeatureExtractor:
 
@@ -11,10 +12,14 @@ class FeatureExtractor:
 
         if n_gram_config.PAD_SENTENCES:
             self.sentences = self.__pad_sentences__()
+            pickle.dump(self.sentences, open('padded_training_sentences', 'wb'), True)
     def __load_processed_training_data__(self):
         return pickle.load(open(config.PROCESSED_TRAIN_DATA_PATH, 'rb'))
     def __pad_sentences__(self):
         return list(map(lambda x: ['<sos>' * (self.n - 1)] + x + ['<eos>' * (self.n - 1)], self.sentences))
+
+    def __embed_sentences__(self):
+        pass
     def __extract_n_grams__(self):
         self.n_grams = []
         average_sentence_length = 0
