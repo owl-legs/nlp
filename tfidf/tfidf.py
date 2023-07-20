@@ -27,6 +27,10 @@ tfidf = {}
 for doc_id, word in tf.keys():
     tfidf[(doc_id, word)] = tf[(doc_id, word)] * math.log2(n_documents / df[word])
 
-#tfidf_sentences = []
+tfidf_sentences = []
+for doc_id in range(n_documents):
+    tfidf_sentences.append(list(map(lambda x: tfidf[(doc_id, x)], tokenized_sentences[doc_id])))
+pickle.dump(tfidf_sentences, open(config.TFIDF_EMBEDDED_OUTPUT, 'wb'), True)
+
 
 
