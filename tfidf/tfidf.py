@@ -2,6 +2,7 @@ from data_parser import DataParser
 import config
 import pickle
 import collections
+import math
 
 dp = DataParser()
 dp.write_out_corpus_stats()
@@ -24,5 +25,5 @@ for doc_id in tokenized_sentences:
 
 tfidf = {}
 for doc_id, word in tf.keys():
-    pass
+    tfidf[(doc_id, word)] = tf[(doc_id, word)] * math.log2(n_documents / df[word])
 
