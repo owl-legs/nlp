@@ -18,7 +18,7 @@ def update_df(sentence):
     for word in sentence_set:
         df[word] += 1
 
-for doc_id in tokenized_sentences:
+for doc_id in range(n_documents):
     update_df(tokenized_sentences[doc_id])
     for word in tokenized_sentences[doc_id]:
         tf[(doc_id, word)] += 1
@@ -26,4 +26,7 @@ for doc_id in tokenized_sentences:
 tfidf = {}
 for doc_id, word in tf.keys():
     tfidf[(doc_id, word)] = tf[(doc_id, word)] * math.log2(n_documents / df[word])
+
+#tfidf_sentences = []
+
 
