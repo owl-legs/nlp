@@ -11,9 +11,16 @@ for _ in range(m_models):
 ground_truth = generate_predictions(n=100)
 
 #precision := tp / (tp + fp)
+#       #low => we are predicting everything as a positive result
+
 #negative_predictive_value := tn / (tn + fn)
+#       #low => we are predicting everything as a negative result
+
 #sensitivity := tp / (tp + fn)
+#       #low => we are not accurately identifying which samples belong to our positive class
+
 #specificity := tn / (tn + fp)
+#       #low => we are not accurately identifying which samples belong to our negative class
 
 def calculate_stats(y_pred, y):
     tp, fp, tn, fn = 0, 0, 0, 0
