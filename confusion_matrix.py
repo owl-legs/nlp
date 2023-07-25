@@ -36,6 +36,12 @@ def calculate_matrix(y_pred, y):
                     'sensitivity':stats['tp']/(stats['tp'] + stats['fn']),
                     'specificity':stats['tn']/(stats['tn'] + stats['fp'])}
 
-print(calculate_matrix(model_predictions[0], ground_truth))
+model_stats = {}
+for i in range(m_models):
+    matrix, stats = calculate_matrix(model_predictions[i], ground_truth)
+    model_stats[f'''model_{i}'''] = {'matrix':matrix,
+                                     'core_stats':stats}
+
+print(model_stats)
 
 
