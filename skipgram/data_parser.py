@@ -39,3 +39,5 @@ def load_train_data(directory=config.TRAINING_DATA_PATH):
 
 def load_data():
     load_train_data()
+
+load_data()
