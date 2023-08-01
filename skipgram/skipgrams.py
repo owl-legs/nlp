@@ -1,7 +1,7 @@
 import pickle
 import config
 import collections
-import os
+import tensorflow as tf
 class Generator:
     def __init__(self):
         print(os.getcwd())
@@ -28,15 +28,47 @@ class Generator:
 
     def generate_training_data(self):
 
+        window_size = 7
+
         vocab_size = len(self.tokens)
         targets, contexts, labels = [], [], []
 
         i = 1
         n = len(self.sequences)
 
+        sampling_table = tf.keras.preprocessing.sequence.make_sampling_table
+        num_ns = 4
+
         for tokenized_sequence in self.__tokenize_sequences__():
 
             print(f'''{(i/n)*100.00}% complete''')
+
+            positive_skip_grams, _ = tf.keras.preprocessing.sequence.skipgrams(
+                tokenized_sequence,
+                vocabulary_size=vocab_size,
+                sampling_table=sampling_table,
+                window_size=window_size,
+                negative_samples=0)
+
+            for target_word, context_word in positive_skip_grams:
+
+                context_class = tf.expand_dims(
+                    tf.constant([context_word], dtype="int64"), 1)
+
+                negative_sampling_candidates, _, _ = tf.random.log_uniform_candidate_sampler(
+                    true_classes=context_class,
+                    num_true=1,
+                    num_sampled=num_ns,
+                    unique=True,
+                    range_max=vocab_size,
+                    seed=55,
+                    name="negative_sampling")
+
+
+
+
+
+
             i += 1
 
         return targets, contexts, labels
