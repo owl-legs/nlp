@@ -4,12 +4,8 @@ import collections
 import tensorflow as tf
 class Generator:
     def __init__(self):
-        print(os.getcwd())
         self.sequences = pickle.load(open('data/trainingData.txt', 'rb'))
-        print(self.sequences)
         self.tokens = self.__generate_tokens__()
-        print(self.tokens)
-
     def __filter__(self):
         pass
     def __generate_tokens__(self):
@@ -28,7 +24,7 @@ class Generator:
 
     def generate_training_data(self):
 
-        window_size = 7
+        window_size = 2
 
         vocab_size = len(self.tokens)
         targets, contexts, labels = [], [], []
@@ -36,7 +32,7 @@ class Generator:
         i = 1
         n = len(self.sequences)
 
-        sampling_table = tf.keras.preprocessing.sequence.make_sampling_table
+        sampling_table = tf.keras.preprocessing.sequence.make_sampling_table(vocab_size)
         num_ns = 4
 
         for tokenized_sequence in self.__tokenize_sequences__():
@@ -64,10 +60,12 @@ class Generator:
                     seed=55,
                     name="negative_sampling")
 
+                context = tf.concat([tf.squeeze(context_class, 1), negative_sampling_candidates], 0)
+                label = tf.constant([1] + [0] * num_ns, dtype="int64")
 
-
-
-
+                targets.append(target_word)
+                contexts.append(context)
+                labels.append(label)
 
             i += 1
 
