@@ -3,7 +3,7 @@ import numpy as np
 from embeddings.analysis.distance_functions import euclidean_distance
 
 
-def distance_matrix(coordinates: list[list[Union[float, int]]], distance: Callable = euclidean_distance()) -> list[list[float]]:
+def distance_matrix(coordinates: list[list[Union[float, int]]], distance: Callable = euclidean_distance) -> list[list[float]]:
 
     n = len(coordinates)
     _distance_matrix = np.zeros(shape=(n, n))
