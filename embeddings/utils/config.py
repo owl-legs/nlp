@@ -15,8 +15,8 @@ class DocumentConfig:
     remove_punctuation: bool
     remove_stopwords: bool
 
-    excluded_punctuation: Optional[field(default_factory=list)]
-    stopwords: Optional[field(default_factory=list)]
+    excluded_punctuation: field(default_factory=list)
+    stopwords: field(default_factory=list)
 
     @classmethod
     def create(cls,
