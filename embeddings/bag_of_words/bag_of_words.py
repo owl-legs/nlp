@@ -2,11 +2,11 @@ from collections import Counter
 from typing import Optional
 
 import numpy as np
-import pandas as pd
 
 from embeddings.utils.vocab import CorpusVocab
-from embeddings.utils.tokenizer import lower_text, remove_punctuation, remove_stopwords, tokenize_document
-from embeddings.utils.config import DocumentConfig
+from embeddings.utils.preprocessing.string_preprocessing import lower_text, remove_punctuation, tokenize_document
+from embeddings.utils.preprocessing.token_preprocessing import remove_stopwords
+from embeddings.utils.document_config import DocumentConfig
 
 
 def bag_of_words_embedding(
