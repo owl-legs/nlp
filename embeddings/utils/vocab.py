@@ -11,15 +11,15 @@ from embeddings.utils.preprocessing.token_preprocessing import remove_stopwords
 
 @dataclass
 class CorpusVocab:
-    unknown_word_identifier: str
     vocab: dict = field(default_factory=dict)
+    unknown_word_identifier: str = UNKNOWN_WORD
+
 
     @classmethod
     def create(cls,
                documents: list[str],
                document_config: DocumentConfig,
-               corpus_vocab_config: CorpusVocabConfig
-               ):
+               corpus_vocab_config: CorpusVocabConfig):
 
         _tokens = {}
 
@@ -53,8 +53,8 @@ class CorpusVocab:
         _tokens = cls.__assign_token_indexes__(_tokens=_tokens, randomize_token_index=corpus_vocab_config.randomize_token_index)
 
         return CorpusVocab(
-            unknown_word_identifier=UNKNOWN_WORD,
-            vocab=_tokens
+            vocab=_tokens,
+            unknown_word_identifier=corpus_vocab_config.unknown_word_ident
         )
 
     @staticmethod
@@ -69,7 +69,7 @@ class CorpusVocab:
 
     @staticmethod
     def __n_most_frequent_tokens__(_tokens, max_tokens) -> dict:
-        _token_tuples = [(_token, _data) for _token, _data in _tokens.items()]
+        _token_tuples = [(_token, _data['frequency']) for _token, _data in _tokens.items()]
         _token_tuples.sort(key=lambda x: x[1])
         _token_tuples = _token_tuples[:max_tokens]
 
