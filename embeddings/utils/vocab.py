@@ -44,18 +44,16 @@ class CorpusVocab:
         return list(self.tokens.keys())
 
     @property
-    def get_token_corpus_count(self, token: str) -> int:
-        token_info = self.tokens.get(token) or {}
-        return token_info.get('frequency') or 0
+    def vocab_size(self) -> int:
+        return len(self.tokens)
 
-    @property
     def get_token_index(self, token: str) -> int:
         token_info = self.tokens.get(token) or {}
         return token_info.get('first_observed_index') or -1
 
-    @property
-    def vocab_size(self) -> int:
-        return len(self.tokens)
+    def get_token_corpus_count(self, token: str) -> int:
+        token_info = self.tokens.get(token) or {}
+        return token_info.get('frequency') or 0
 
 
 
