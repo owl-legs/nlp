@@ -2,14 +2,16 @@ from embeddings.utils.document_config import DocumentConfig
 from embeddings.utils.vocab import CorpusVocab
 
 
-def remove_stopwords(document_tokens: list[str], document_config: DocumentConfig) -> list[str]:
+def remove_stopwords(document_tokens: list[str], stopwords: list[str]) -> list[str]:
     return [
-        token for token in document_tokens if token not in document_config.stopwords
+        token for token in document_tokens if token not in stopwords
     ]
 
 
-def remove_unknown_words(document_tokens: list[str], corpus_vocab: CorpusVocab) -> list[str]:
-    return [corpus_vocab.vocab.get(token) or corpus_vocab.unknown_word_identifier for token in document_tokens]
+def remove_unknown_words(document_tokens: list[str],
+                         vocab: dict,
+                         unknown_word_identifier: str) -> list[str]:
+    return [vocab.get(token) or unknown_word_identifier for token in document_tokens]
 
 
 

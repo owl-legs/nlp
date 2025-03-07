@@ -3,16 +3,15 @@ from typing import Optional
 
 import numpy as np
 
-from embeddings.utils.vocab_config import CorpusVocabConfig
-from embeddings.utils.vocab import CorpusVocab
 from embeddings.utils.preprocessing.string_preprocessing import lower_text, remove_punctuation, tokenize_document
-from embeddings.utils.preprocessing.token_preprocessing import remove_stopwords
+from embeddings.utils.preprocessing.token_preprocessing import remove_stopwords, remove_unknown_words
 from embeddings.utils.document_config import DocumentConfig
+from embeddings.utils.vocab import CorpusVocab
 
 
 def bag_of_words_embedding(
         tokens: list[str],
-        corpus_vocab: CorpusVocab
+        corpus_vocab
 ) -> list[int]:
     token_counts = Counter(tokens)
     embedding = np.zeros(shape=(corpus_vocab.vocab_size,))
@@ -27,9 +26,8 @@ def bag_of_words_embedding(
 def embed_documents(
     document_list: Optional[list[str]],
     document_config: DocumentConfig,
-    vocab_config: CorpusVocabConfig
+    vocab: CorpusVocab
 ) -> list[list[int]]:
-    corpus_vocab = CorpusVocab().create(documents=document_list, document_config=document_config, max_tokens=400)
 
     embeddings = []
 
@@ -41,13 +39,16 @@ def embed_documents(
             document = remove_punctuation(document=document)
 
         document_tokens = tokenize_document(document=document)
-        if document_config.remove_punctuation:
-            document_tokens = remove_stopwords(document_tokens=document_tokens, document_config=document_config)
-
+        if document_config.remove_stopwords:
+            document_tokens = remove_stopwords(document_tokens=document_tokens,
+                                               stopwords=document_config.stopwords)
+        document_tokens = remove_unknown_words(document_tokens=document_tokens,
+                                               vocab=vocab.vocab,
+                                               unknown_word_identifier=vocab.unknown_word_identifier)
         embeddings.append(
             bag_of_words_embedding(
                 tokens=document_tokens,
-                corpus_vocab=corpus_vocab
+                corpus_vocab=vocab
             )
         )
 

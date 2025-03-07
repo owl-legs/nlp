@@ -18,7 +18,8 @@ class CorpusVocab:
     def create(cls,
                documents: list[str],
                document_config: DocumentConfig,
-               corpus_vocab_config: CorpusVocabConfig):
+               corpus_vocab_config: CorpusVocabConfig
+               ):
 
         _tokens = {}
 
@@ -32,7 +33,8 @@ class CorpusVocab:
             document_tokens = tokenize_document(document=document)
 
             if document_config.remove_stopwords:
-                document_tokens = remove_stopwords(document_tokens=document_tokens)
+                document_tokens = remove_stopwords(document_tokens=document_tokens,
+                                                   stopwords=document_config.stopwords)
 
             document_token_counts = Counter(document_tokens)
 
