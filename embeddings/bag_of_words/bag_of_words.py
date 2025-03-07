@@ -27,7 +27,7 @@ def embed_documents(
     document_list: Optional[list[str]],
     document_config: DocumentConfig,
 ) -> list[list[int]]:
-    corpus_vocab = CorpusVocab().create(documents=document_list, document_config=document_config)
+    corpus_vocab = CorpusVocab().create(documents=document_list, document_config=document_config, max_tokens=400)
 
     embeddings = []
 
