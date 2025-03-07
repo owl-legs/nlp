@@ -3,6 +3,7 @@ from typing import Optional
 
 import numpy as np
 
+from embeddings.utils.vocab_config import CorpusVocabConfig
 from embeddings.utils.vocab import CorpusVocab
 from embeddings.utils.preprocessing.string_preprocessing import lower_text, remove_punctuation, tokenize_document
 from embeddings.utils.preprocessing.token_preprocessing import remove_stopwords
@@ -26,6 +27,7 @@ def bag_of_words_embedding(
 def embed_documents(
     document_list: Optional[list[str]],
     document_config: DocumentConfig,
+    vocab_config: CorpusVocabConfig
 ) -> list[list[int]]:
     corpus_vocab = CorpusVocab().create(documents=document_list, document_config=document_config, max_tokens=400)
 

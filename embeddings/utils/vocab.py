@@ -1,11 +1,13 @@
+from collections import Counter
 from dataclasses import dataclass, field, asdict
 
 import numpy as np
 
 from embeddings.utils.constants import UNKNOWN_WORD
 from embeddings.utils.document_config import DocumentConfig
+from embeddings.utils.vocab_config import CorpusVocabConfig
 from embeddings.utils.preprocessing.string_preprocessing import lower_text, remove_punctuation, tokenize_document
-
+from embeddings.utils.preprocessing.token_preprocessing import remove_stopwords
 
 @dataclass
 class CorpusVocab:
@@ -16,8 +18,7 @@ class CorpusVocab:
     def create(cls,
                documents: list[str],
                document_config: DocumentConfig,
-               max_tokens: int,
-               randomize_token_index: bool):
+               corpus_vocab_config: CorpusVocabConfig):
 
         _tokens = {}
 
@@ -29,24 +30,25 @@ class CorpusVocab:
                 document = remove_punctuation(document=document)
 
             document_tokens = tokenize_document(document=document)
-            document_tokens = set(document_tokens)
+
+            if document_config.remove_stopwords:
+                document_tokens = remove_stopwords(document_tokens=document_tokens)
+
+            document_token_counts = Counter(document_tokens)
 
             for token in document_tokens:
                 if token in _tokens:
-                    _tokens[token]['frequency'] += 1
+                    _tokens[token]['frequency'] += document_token_counts[token]
                 else:
                     _tokens[token] = {
-                        'frequency': 1
+                        'frequency': document_token_counts[token]
                     }
 
-        if document_config.remove_stopwords:
-            _tokens.pop(document_config.stopwords)
-
-        _tokens = cls.__n_most_frequent_tokens__(_tokens=_tokens, max_tokens=max_tokens)
+        _tokens = cls.__n_most_frequent_tokens__(_tokens=_tokens, max_tokens=corpus_vocab_config.max_tokens)
         _tokens[UNKNOWN_WORD] = {
             'frequency': 1
         }
-        _tokens = cls.__assign_token_indexes__(_tokens=_tokens, randomize_token_index=randomize_token_index)
+        _tokens = cls.__assign_token_indexes__(_tokens=_tokens, randomize_token_index=corpus_vocab_config.randomize_token_index)
 
         return CorpusVocab(
             unknown_word_identifier=UNKNOWN_WORD,
