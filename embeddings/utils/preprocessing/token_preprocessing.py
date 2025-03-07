@@ -1,7 +1,3 @@
-from embeddings.utils.document_config import DocumentConfig
-from embeddings.utils.vocab import CorpusVocab
-
-
 def remove_stopwords(document_tokens: list[str], stopwords: list[str]) -> list[str]:
     return [
         token for token in document_tokens if token not in stopwords
