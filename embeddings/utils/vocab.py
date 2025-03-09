@@ -59,7 +59,7 @@ class CorpusVocab:
 
     @staticmethod
     def __assign_token_indexes__(_tokens, randomize_token_index):
-        tokens = np.array(_tokens.keys())
+        tokens = list(_tokens.keys())
         if randomize_token_index:
             tokens = np.random.choice(tokens, size=len(tokens), replace=False)
         for i, token in enumerate(tokens):
