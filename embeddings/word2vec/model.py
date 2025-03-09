@@ -5,7 +5,7 @@ EMBED_DIMENSION = 300
 EMBED_MAX_NORM = 1
 
 @dataclass
-class ContinuousBagOfWords(nn.module):
+class ContinuousBagOfWords(nn.Module):
     def __init__(self, vocab_size: int):
 
         super(ContinuousBagOfWords, self).__init__()
