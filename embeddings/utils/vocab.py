@@ -47,11 +47,11 @@ class CorpusVocab:
                     }
 
         _tokens = cls.__n_most_frequent_tokens__(_tokens=_tokens, max_tokens=corpus_vocab_config.max_tokens)
-        _tokens[UNKNOWN_WORD] = {
-            'frequency': 1
-        }
         _tokens = cls.__assign_token_indexes__(_tokens=_tokens, randomize_token_index=corpus_vocab_config.randomize_token_index)
-
+        _tokens[UNKNOWN_WORD] = {
+            'frequency': 1,
+            'index': 0
+        }
         return CorpusVocab(
             vocab=_tokens,
             unknown_word_identifier=corpus_vocab_config.unknown_word_ident
@@ -63,7 +63,7 @@ class CorpusVocab:
         if randomize_token_index:
             tokens = np.random.choice(tokens, size=len(tokens), replace=False)
         for i, token in enumerate(tokens):
-            _tokens[token].update({'index': i})
+            _tokens[token].update({'index': i+1})
         return _tokens
 
 
