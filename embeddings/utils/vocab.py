@@ -85,7 +85,7 @@ class CorpusVocab:
 
     def get_token_index(self, token: str) -> int:
         token_info = self.vocab.get(token) or {}
-        return token_info.get('index') or token_info.get(self.unknown_word_identifier)
+        return token_info.get('index') or 0 # unknown word index
 
     def get_token_corpus_count(self, token: str) -> int:
         token_info = self.vocab.get(token) or {}
