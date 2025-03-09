@@ -54,7 +54,7 @@ class CorpusVocab:
         }
         return CorpusVocab(
             vocab=_tokens,
-            unknown_word_identifier=corpus_vocab_config.unknown_word_ident
+            unknown_word_identifier=corpus_vocab_config.unknown_word_identifier
         )
 
     @staticmethod
