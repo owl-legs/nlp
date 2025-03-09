@@ -25,7 +25,7 @@ class Embedding:
         embeddedText = []
         return embeddedText
     def __create_one_hot_embeddings__(self):
-        print('\n creating one-hot embedding map')
+        print('\n creating one-hot embeddings map')
         embeddingMap = {t:i for i, t in enumerate(self.tokens.keys())}
         embeddedSentences = []
         for sentence in self.sentences:
@@ -34,7 +34,7 @@ class Embedding:
         pickle.dump(embeddingMap, open('embeddings/maps/oneHotEmbeddingMap', 'wb'), True)
         pickle.dump(embeddedSentences, open('embeddings/embeddedSentences', 'wb'), True)
     def __create_word2vec_embeddings__(self):
-        print('\n creating word2vec embedding map')
+        print('\n creating word2vec embeddings map')
         word_vector = word2vec.Word2Vec(sentences=self.sentences, vector_size=self.embedding_size)
         word_vector.wv.save_word2vec_format('embeddings/maps/word2vecEmbeddingMap.txt', binary=False)
         word_vector.wv.save_word2vec_format('embeddings/maps/word2vecEmbeddingMap.bin', binary=True)
