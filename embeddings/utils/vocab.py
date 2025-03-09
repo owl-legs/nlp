@@ -81,9 +81,17 @@ class CorpusVocab:
 
     @property
     def vocab_size(self) -> int:
+        """
+        :return: number of distinct tokens in vocabulary
+        plus the unknown word identifier
+        """
         return len(self.vocab)
 
     def get_token_index(self, token: str) -> int:
+        """
+        :param token: string-valued token to identify integer-valued index of
+        :return: index in vocabularly or 0 (the index of the unknown word identifier)
+        """
         token_info = self.vocab.get(token) or {}
         return token_info.get('index') or 0 # unknown word index
 
