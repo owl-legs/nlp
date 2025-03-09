@@ -70,10 +70,10 @@ class CorpusVocab:
     @staticmethod
     def __n_most_frequent_tokens__(_tokens, max_tokens) -> dict:
         _token_tuples = [(_token, _data['frequency']) for _token, _data in _tokens.items()]
-        _token_tuples.sort(key=lambda x: x[1])
+        _token_tuples.sort(key=lambda x: x[1], reverse=True)
         _token_tuples = _token_tuples[:max_tokens]
 
-        return {_token: _data for _token, _data in _token_tuples}
+        return {_token: {'frequency': _freq} for _token, _freq in _token_tuples}
 
     @property
     def get_vocabulary_list(self) -> list[str]:
