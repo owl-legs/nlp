@@ -54,12 +54,12 @@ class CorpusVocab:
         }
         return CorpusVocab(
             vocab=_tokens,
-            unknown_word_identifier=corpus_vocab_config.unknown_word_ident
+            unknown_word_identifier=corpus_vocab_config.unknown_word_identifier
         )
 
     @staticmethod
     def __assign_token_indexes__(_tokens, randomize_token_index):
-        tokens = np.array(_tokens.keys())
+        tokens = list(_tokens.keys())
         if randomize_token_index:
             tokens = np.random.choice(tokens, size=len(tokens), replace=False)
         for i, token in enumerate(tokens):
@@ -70,10 +70,10 @@ class CorpusVocab:
     @staticmethod
     def __n_most_frequent_tokens__(_tokens, max_tokens) -> dict:
         _token_tuples = [(_token, _data['frequency']) for _token, _data in _tokens.items()]
-        _token_tuples.sort(key=lambda x: x[1])
+        _token_tuples.sort(key=lambda x: x[1], reverse=True)
         _token_tuples = _token_tuples[:max_tokens]
 
-        return {_token: _data for _token, _data in _token_tuples}
+        return {_token: {'frequency': _freq} for _token, _freq in _token_tuples}
 
     @property
     def get_vocabulary_list(self) -> list[str]:
@@ -81,11 +81,19 @@ class CorpusVocab:
 
     @property
     def vocab_size(self) -> int:
+        """
+        :return: number of distinct tokens in vocabulary
+        plus the unknown word identifier
+        """
         return len(self.vocab)
 
     def get_token_index(self, token: str) -> int:
+        """
+        :param token: string-valued token to identify integer-valued index of
+        :return: index in vocabularly or 0 (the index of the unknown word identifier)
+        """
         token_info = self.vocab.get(token) or {}
-        return token_info.get('index') or -1
+        return token_info.get('index') or 0 # unknown word index
 
     def get_token_corpus_count(self, token: str) -> int:
         token_info = self.vocab.get(token) or {}
