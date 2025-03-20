@@ -35,7 +35,7 @@ class SkipGramModel(nn.Module):
             forward pass
         """
         x = self.embeddings(x)
-        x = self.linear(x)
+        x = self.linear(nn.ReLU(x))
         return x
 
 
